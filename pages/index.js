@@ -4,14 +4,20 @@ import styles from '../styles/Home.module.css'
 import { Input, Typography, Form, Button } from 'antd'
 const { TextArea } = Input;
 import useSWR from 'swr'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import abiDecoder from 'abi-decoder';
+
+import { ethers } from "ethers";
+
 
 
 const fetcher = (...args) => fetch(...args).then(res => res.json())
 
 
 export default function Home() {
+  useEffect(() => {
+    window.ethers = ethers
+  }, [])
   const [data, setData] = useState()
   const onFinish = async (values) => {
     const abiData = await fetch(`https://api.etherscan.io/api?module=contract&action=getabi&address=${values.address}`)
