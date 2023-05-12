@@ -1,45 +1,42 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
-import { Input, Typography, Form, Button } from 'antd'
+import Head from "next/head";
+import Image from "next/image";
+import styles from "../styles/Home.module.css";
+import { Input, Typography, Form, Button } from "antd";
 const { TextArea } = Input;
-import useSWR from 'swr'
-import { useEffect, useState } from 'react';
-import abiDecoder from 'abi-decoder';
+import useSWR from "swr";
+import { useEffect, useState } from "react";
+import abiDecoder from "abi-decoder";
 
 import { ethers } from "ethers";
 
-
-
-const fetcher = (...args) => fetch(...args).then(res => res.json())
-
+const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
 export default function Home() {
   useEffect(() => {
-    window.ethers = ethers
-  }, [])
-  const [data, setData] = useState()
+    window.ethers = ethers;
+  }, []);
+  const [data, setData] = useState();
   const onFinish = async (values) => {
-    const abiData = await fetch(`https://api.etherscan.io/api?module=contract&action=getabi&address=${values.address}`)
-    const abi = await abiData.json()
-    console.log(abi)
+    const abiData = await fetch(
+      `https://api.etherscan.io/api?module=contract&action=getabi&address=${values.address}`
+    );
+    const abi = await abiData.json();
+    console.log(abi);
     if (abi.status != "0") {
-      const { result } = abi
-
+      const { result } = abi;
 
       abiDecoder.addABI(JSON.parse(result));
       const decodedData = abiDecoder.decodeMethod(values.hex);
-      console.log('Success:', decodedData);
-      setData(decodedData)
-    }
-    else {
-      console.log("rate limit")
-      setData('error')
+      console.log("Success:", decodedData);
+      setData(decodedData);
+    } else {
+      console.log("rate limit");
+      setData("error");
     }
   };
 
   const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
+    console.log("Failed:", errorInfo);
   };
   return (
     <div className={styles.container}>
@@ -50,7 +47,9 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-
+        <Button href="https://calldata-decoder.apoorv.xyz/">
+          Another tool that does this
+        </Button>
 
         <Form
           name="basic"
@@ -64,21 +63,23 @@ export default function Home() {
           <Form.Item
             label="Contract Address"
             name="address"
-            rules={[{ required: true, message: 'Enter contract address you are interacting with' }]}
+            rules={[
+              {
+                required: true,
+                message: "Enter contract address you are interacting with",
+              },
+            ]}
           >
             <Input />
-
           </Form.Item>
 
           <Form.Item
             label="Hex Data"
             name="hex"
-            rules={[{ required: true, message: 'Add hex data' }]}
+            rules={[{ required: true, message: "Add hex data" }]}
           >
             <Input />
           </Form.Item>
-
-
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button type="primary" htmlType="submit">
@@ -86,7 +87,11 @@ export default function Home() {
             </Button>
           </Form.Item>
         </Form>
-        <div style={{ width: "75%" }}><Typography.Text code copyable>{JSON.stringify(data)}</Typography.Text></div>
+        <div style={{ width: "75%" }}>
+          <Typography.Text code copyable>
+            {JSON.stringify(data)}
+          </Typography.Text>
+        </div>
       </main>
 
       <footer className={styles.footer}>
@@ -95,12 +100,12 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
+          Powered by{" "}
           <span className={styles.logo}>
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
           </span>
         </a>
       </footer>
     </div>
-  )
+  );
 }
